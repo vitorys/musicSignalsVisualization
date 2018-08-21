@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from app.index.form.params import Params
 from flask import Blueprint, render_template, request
 import json

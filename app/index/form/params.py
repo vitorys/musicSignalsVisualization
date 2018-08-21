@@ -5,7 +5,14 @@ from flask_wtf.file import FileField
 
 class Params(Form):
 
-    musicFile = FileField('Musica')
+    musicFile = FileField('Música')
 
-    visualizationAlgorithm = SelectField('Algoritmo de Amostragem', [validators.InputRequired()], choices=[('lda', 'Linear Discriminant Analysis'),
-                                                                                                           ('pca', 'Principal Component Analysis')])
+    groupAlgorithm = SelectField('Algoritmo de Agrupamento', [
+                                 validators.InputRequired()], choices=[('kmeans', 'KMeans')])
+
+    visualizationAlgorithm = SelectField('Algoritmo de Projeção', [validators.InputRequired()], choices=[('lda', 'Linear Discriminant Analysis'),
+                                                                                                         ('pca', 'Principal Component Analysis')])
+
+    featureExt = SelectField('Extrator de Características', [validators.InputRequired()], choices=[('1', 'Extrator 1'),
+                                                                                                   ('2', 'Extrator 2'),
+                                                                                                   ('3', 'Extrator 3')])

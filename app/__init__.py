@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, Blueprint
 from app.index.controller import index_blueprint
 app = Flask(__name__)
