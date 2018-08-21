@@ -7,6 +7,11 @@
         padding: 10px;
         overflow: hidden;
     }
+
+    .sub-group {
+        display: none;
+    }
+
     .container {
         height: 100vh;
     }
@@ -61,6 +66,11 @@
                         <div class="form-group text-center">
                             {{ render_field(form.groupAlgorithm, class_="form-control") }}
                         </div>
+                        <a href="#" onclick="showParamsKmeans()"> <small>Avançado</small></a>
+
+                        <div id="centroidNumberDiv" class="form-group sub-group text-center">
+                            {{ render_field(form.centroidNumber, class_="form-control") }}
+                        </div>
 
                         <div class="form-group text-center">
                             {{ render_field(form.visualizationAlgorithm, class_="form-control") }}
@@ -71,7 +81,9 @@
                         </div>
 
                         <div class="form-group text-center">
-                                <p><input type="submit" class="btn btn-primary col-md-12 col-sm-12" value="Ok"></p>
+                            <p>
+                                <input type="submit" class="btn btn-primary col-md-12 col-sm-12" value="Ok">
+                            </p>
                         </div>
 
                     </div>
@@ -101,6 +113,11 @@
         Plotly.plot('graph',
             graph.data,
             graph.layout || {});
+
+        function showParamsKmeans() {
+            var divParam = document.getElementById('centroidNumberDiv');
+            divParam.style.display = "block";
+        }
 
     </script>
 

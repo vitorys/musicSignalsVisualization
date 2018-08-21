@@ -10,6 +10,9 @@ class Params(Form):
     groupAlgorithm = SelectField('Algoritmo de Agrupamento', [
                                  validators.InputRequired()], choices=[('kmeans', 'KMeans')])
 
+    # Kmeans params #
+    centroidNumber = IntegerField('Número de Centróides')
+
     visualizationAlgorithm = SelectField('Algoritmo de Projeção', [validators.InputRequired()], choices=[('lda', 'Linear Discriminant Analysis'),
                                                                                                          ('pca', 'Principal Component Analysis')])
 
