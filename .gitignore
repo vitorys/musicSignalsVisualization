@@ -1,2 +1,5 @@
 # VSCode files
 vscode/*
+
+# .pyc files
+*.pyc
