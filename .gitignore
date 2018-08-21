@@ -1,5 +1,7 @@
-# VSCode files
+# VSCode files #
+#############
 vscode/*
 
-# .pyc files
+# .pyc files #
+##############
 *.pyc
