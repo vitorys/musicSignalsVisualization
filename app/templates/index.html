@@ -54,7 +54,7 @@
             <!--col-md-6-->
             <div class="col-md-4 shadow-sm p-3 mb-5 bg-white rounded menu">
 
-                <form action="">
+                <form method="POST" enctype="multipart/form-data">
                     <!-- form inicio -->
                     <div class="border">
 
@@ -66,7 +66,10 @@
                         <div class="form-group text-center">
                             {{ render_field(form.groupAlgorithm, class_="form-control") }}
                         </div>
-                        <a href="#" onclick="showParamsKmeans()"> <small>Avançado</small></a>
+
+                        <a href="#" onclick="showParamsKmeans()">
+                            <small>Avançado</small>
+                        </a>
 
                         <div id="centroidNumberDiv" class="form-group sub-group text-center">
                             {{ render_field(form.centroidNumber, class_="form-control") }}
@@ -90,7 +93,6 @@
                     <!-- border -->
                 </form>
                 <!-- form -->
-
 
             </div>
             <!--col-md-4-->

@@ -1,45 +1,44 @@
 # -*- coding: utf-8 -*-
-
+# Import form
 from app.index.form.params import Params
+
+# Import feature extraction algorithms
+from app.algorithms.featureExtrators.all import get_gtzan_features
+from app.algorithms.featureExtrators.all import get_rp_features
+from app.algorithms.featureExtrators.all import get_stft_features
+
+# Import graph module
+from app.graph.controller import Graph
+
+# Import application requirements
 from flask import Blueprint, render_template, request
-import json
-import plotly
+from werkzeug import secure_filename
+
 
 index_blueprint = Blueprint('index', __name__)
 
-
-@index_blueprint.route('/', methods=['GET'])
+@index_blueprint.route('/', methods=['GET', 'POST'])
 def index():
+
     form = Params(request.form)
+
     if (request.method == 'POST' and form.validate()):
-        pass
 
-    graph = generateGraphExample()
-    return render_template('index.html', graph=graph, form=form)
+        try:
+            filename = secure_filename(request.files['musicFile'].filename)
+        except expression as identifier:
+            print('erro')
 
+        request.files['musicFile'].save('/home/suporte/musicSignalsVisualization/.temp_' + filename)
 
-def generateGraphExample():
-    graph = dict(
-        # Dados
-        data=[
-            # Conjunto de dados 1 -> Primeira cor
-            dict(
-                x=[1, 3, 2, 5, 7],
-                y=[2, 6, 4, 2, 3],
-                mode='markers'
-            ),
-            # Conjunto de dados 2 -> Segunda cor cor
-            dict(
-                x=[1, 2, 3, 4, 5],
-                y=[1, 2, 3, 4, 5],
-                mode='markers'
-            )
-        ],
-        # Layout
-        layout=dict(
-            title='Nome do Gráfico'
-        )
-    )
-    graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
+        # Algorithms here
+        matrix = get_gtzan_features('.temp_' + filename)
 
-    return graphJSON
+        print(matrix)
+
+        graph = Graph(matrix).generateGraph()
+
+        return render_template('index.html', graph=graph , form=form)
+
+    return render_template('index.html', graph=graph , form=form)
+
