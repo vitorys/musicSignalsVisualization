@@ -6,6 +6,7 @@ from app.index.form.params import Params
 from app.algorithms.featureExtrators.all import get_gtzan_features
 from app.algorithms.featureExtrators.all import get_rp_features
 from app.algorithms.featureExtrators.all import get_stft_features
+from app.algorithms.grouping.kmeans import getCentroids
 
 from app.algorithms.transformations.pca import reduceDimensionality
 
@@ -35,7 +36,6 @@ def index():
 
         # Algorithms here
         extratorAlgorithm = request.form['featureExt']
-        print(extratorAlgorithm)
 
         if extratorAlgorithm == 'marsyas':
             matrix = get_gtzan_features('.temp_' + filename)
@@ -45,13 +45,12 @@ def index():
             matrix = get_stft_features('.temp_' + filename)
 
         matrix = reduceDimensionality(matrix)
+        centroids = getCentroids(matrix, 10)
 
-
-        graph = Graph(matrix).generateGraph()
+        graph = Graph(matrix, centroids, filename).generateGraph()
 
         return render_template('index.html', graph=graph , form=form)
 
-    graph = Graph([[0 , 0]]).generateGraph()
-
+    graph = Graph().generateGraph()
     return render_template('index.html', graph=graph , form=form)
 

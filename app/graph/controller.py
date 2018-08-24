@@ -5,23 +5,29 @@ import plotly
 import numpy as np
 
 class Graph():
-    def __init__(self, matrix):
+    def __init__(self, matrix = None, centroids = None , musicName = ''):
         self.matrix = matrix
+        self.centroids = centroids
+        self.musicName = musicName
 
-    def processMatrix(self):
+    def processMatrix(self, genericMatrix):
+        if(genericMatrix is None):
+            return (0, 0)
+
         xAxis = []
         yAxis = []
 
-        x, y = np.shape(self.matrix)
-        print(x)
+        x, y = np.shape(genericMatrix)
+
         for i in range(0, x):
-            xAxis.append(self.matrix[i][0])
-            yAxis.append(self.matrix[i][1])
+            xAxis.append(genericMatrix[i][0])
+            yAxis.append(genericMatrix[i][1])
 
         return (xAxis, yAxis)
 
     def generateGraph(self):
-        xAxis, yAxis = self.processMatrix()
+        xAxis, yAxis = self.processMatrix(self.matrix)
+        xCentroids, yCentroids = self.processMatrix(self.centroids)
         graph = dict(
             # Data to plot
             data=[
@@ -30,11 +36,17 @@ class Graph():
                     x=xAxis,
                     y=yAxis,
                     mode='markers'
+                ),
+                dict(
+                    x=xCentroids,
+                    y=yCentroids,
+                    mode='markers',
+                    name='Centroids'
                 )
             ],
             # Layout
             layout=dict(
-                title='Nome do Gráfico'
+                title= self.musicName
             )
         )
         graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
