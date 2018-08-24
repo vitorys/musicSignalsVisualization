@@ -9,20 +9,26 @@ class Graph():
         self.matrix = matrix
 
     def processMatrix(self):
-        x = []
-        y = []
+        xAxis = []
+        yAxis = []
 
-        return (x, y)
+        x, y = np.shape(self.matrix)
+        print(x)
+        for i in range(0, x):
+            xAxis.append(self.matrix[i][0])
+            yAxis.append(self.matrix[i][1])
+
+        return (xAxis, yAxis)
 
     def generateGraph(self):
-        print(np.shape(self.matrix))
+        xAxis, yAxis = self.processMatrix()
         graph = dict(
             # Data to plot
             data=[
                 # Dots set # 1
                 dict(
-                    x=[1, 3, 2, 5, 7],
-                    y=[2, 6, 4, 2, 3],
+                    x=xAxis,
+                    y=yAxis,
                     mode='markers'
                 )
             ],

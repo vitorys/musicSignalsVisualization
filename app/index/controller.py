@@ -7,6 +7,8 @@ from app.algorithms.featureExtrators.all import get_gtzan_features
 from app.algorithms.featureExtrators.all import get_rp_features
 from app.algorithms.featureExtrators.all import get_stft_features
 
+from app.algorithms.transformations.pca import reduceDimensionality
+
 # Import graph module
 from app.graph.controller import Graph
 
@@ -26,19 +28,30 @@ def index():
 
         try:
             filename = secure_filename(request.files['musicFile'].filename)
-        except expression as identifier:
+        except:
             print('erro')
 
         request.files['musicFile'].save('/home/suporte/musicSignalsVisualization/.temp_' + filename)
 
         # Algorithms here
-        matrix = get_gtzan_features('.temp_' + filename)
+        extratorAlgorithm = request.form['featureExt']
+        print(extratorAlgorithm)
 
-        print(matrix)
+        if extratorAlgorithm == 'marsyas':
+            matrix = get_gtzan_features('.temp_' + filename)
+        elif extratorAlgorithm == 'rp':
+            matrix = get_rp_features('.temp_' + filename)
+        elif extratorAlgorithm == 'stft':
+            matrix = get_stft_features('.temp_' + filename)
+
+        matrix = reduceDimensionality(matrix)
+
 
         graph = Graph(matrix).generateGraph()
 
         return render_template('index.html', graph=graph , form=form)
+
+    graph = Graph([[0 , 0]]).generateGraph()
 
     return render_template('index.html', graph=graph , form=form)
 

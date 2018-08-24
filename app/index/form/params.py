@@ -11,11 +11,11 @@ class Params(Form):
                                  validators.InputRequired()], choices=[('kmeans', 'KMeans')])
 
     # Kmeans params #
-    centroidNumber = IntegerField('Número de Centróides')
+    centroidNumber = IntegerField('Número de Centróides' , [validators.Optional()])
 
     visualizationAlgorithm = SelectField('Algoritmo de Projeção', [validators.InputRequired()], choices=[('lda', 'Linear Discriminant Analysis'),
                                                                                                          ('pca', 'Principal Component Analysis')])
 
-    featureExt = SelectField('Extrator de Características', [validators.InputRequired()], choices=[('1', 'Extrator 1'),
-                                                                                                   ('2', 'Extrator 2'),
-                                                                                                   ('3', 'Extrator 3')])
+    featureExt = SelectField('Extrator de Características', choices=[('marsyas', 'Marsyas'),
+                                                                ('rp', 'Random Projection'),
+                                                                ('stft', 'Short Time Fourier Transform')])
