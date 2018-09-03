@@ -14,11 +14,15 @@ from app.algorithms.transformations.pca import reduceDimensionality
 from app.graph.controller import Graph
 
 # Import application requirements
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_file
 from werkzeug import secure_filename
 
 
 index_blueprint = Blueprint('index', __name__)
+
+@index_blueprint.route('/getMusic/<string:filename>', methods=['GET'])
+def getMusic(filename):
+    return send_file(".data/" + filename , as_attachment=True)
 
 @index_blueprint.route('/', methods=['GET', 'POST'])
 def index():
@@ -32,24 +36,25 @@ def index():
         except:
             print('erro')
 
-        request.files['musicFile'].save('/home/suporte/musicSignalsVisualization/.temp_' + filename)
+        request.files['musicFile'].save('/home/suporte/musicSignalsVisualization/app/.data/' + filename)
+        musicPath = '/getMusic/' + filename
 
-        # Algorithms here
         extratorAlgorithm = request.form['featureExt']
 
         if extratorAlgorithm == 'marsyas':
-            matrix = get_gtzan_features('.temp_' + filename)
+            matrix = get_gtzan_features('app/.data/' + filename)
         elif extratorAlgorithm == 'rp':
-            matrix = get_rp_features('.temp_' + filename)
+            matrix = get_rp_features('app/.data/' + filename)
         elif extratorAlgorithm == 'stft':
-            matrix = get_stft_features('.temp_' + filename)
+            matrix = get_stft_features('app/.data/' + filename)
 
-        matrix = reduceDimensionality(matrix)
         centroids = getCentroids(matrix, 10)
 
+        matrix = reduceDimensionality(matrix)
+        centroids = reduceDimensionality(centroids)
         graph = Graph(matrix, centroids, filename).generateGraph()
 
-        return render_template('index.html', graph=graph , form=form)
+        return render_template('index.html', graph=graph , form=form, musicPath=musicPath)
 
     graph = Graph().generateGraph()
     return render_template('index.html', graph=graph , form=form)

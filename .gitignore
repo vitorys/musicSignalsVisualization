@@ -1,6 +1,6 @@
 # VSCode files #
 #############
-vscode/*
+.vscode/*
 
 # .pyc files #
 ##############

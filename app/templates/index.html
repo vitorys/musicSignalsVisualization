@@ -88,17 +88,15 @@
                                 <input type="submit" class="btn btn-primary col-md-12 col-sm-12" value="Ok">
                             </p>
                         </div>
-
                     </div>
                     <!-- border -->
                 </form>
                 <!-- form -->
-                <div class="menu">
-
-
-
+                <div class="border">
+                    <div class="container" id="musicPlayer">
+                        <button id="play" onclick="howlerPlay()">Play</button>
+                    </div>
                 </div>
-
             </div>
             <!--col-md-4-->
         </div>
@@ -109,6 +107,7 @@
 
 <footer>
     <!-- Howler.js -->
+    <script src="https://raw.githubusercontent.com/goldfire/howler.js/master/src/howler.core.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.14/howler.core.min.js"></script>
     <!-- D3.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
@@ -126,6 +125,14 @@
         function showParamsKmeans() {
             var divParam = document.getElementById('centroidNumberDiv');
             divParam.style.display = "block";
+        }
+
+        function howlerPlay(){
+            var howler_example = new Howl({
+		        src: ["{{musicPath}}"],
+		        volume: 1
+	        });
+            howler_example.play();
         }
 
     </script>
