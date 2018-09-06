@@ -7,6 +7,7 @@ from app.algorithms.featureExtrators.all import get_gtzan_features
 from app.algorithms.featureExtrators.all import get_rp_features
 from app.algorithms.featureExtrators.all import get_stft_features
 from app.algorithms.grouping.kmeans import getCentroids
+from app.algorithms.preprocessing.norm import normalize
 
 from app.algorithms.transformations.pca import reduceDimensionality
 
@@ -36,8 +37,12 @@ def index():
         except:
             print('erro')
 
-        request.files['musicFile'].save('/home/suporte/musicSignalsVisualization/app/.data/' + filename)
+        request.files['musicFile'].save('app/.data/' + filename)
         musicPath = '/getMusic/' + filename
+
+        centroids_number = int(request.form['centroidNumber'])
+        if not centroids_number:
+            centroids_number = 10
 
         extratorAlgorithm = request.form['featureExt']
 
@@ -48,11 +53,14 @@ def index():
         elif extratorAlgorithm == 'stft':
             matrix = get_stft_features('app/.data/' + filename)
 
-        centroids = getCentroids(matrix, 10)
+        matrix_norm = normalize(matrix)
 
-        matrix = reduceDimensionality(matrix)
-        centroids = reduceDimensionality(centroids)
-        graph = Graph(matrix, centroids, filename).generateGraph()
+        centroids = getCentroids(matrix_norm, centroids_number)
+
+        pca = reduceDimensionality(matrix_norm)
+        matrix_norm = pca.transform(matrix_norm)
+        centroids = pca.transform(centroids)
+        graph = Graph(matrix_norm, centroids, filename).generateGraph()
 
         return render_template('index.html', graph=graph , form=form, musicPath=musicPath)
 
