@@ -114,13 +114,25 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- Plotly.js -->
-    <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script> -->
 
     <script type="text/javascript">
+
         var graph = {{ graph | safe}};
-        Plotly.plot('graph',
-            graph.data,
-            graph.layout || {});
+        var myPlot = document.getElementById("graph"),
+            data = graph.data,
+            layout = graph.layout;
+
+        Plotly.newPlot('graph', graph.data, graph.layout || {});
+
+        myPlot.on('plotly_click', function(data){
+            var pts = '';
+            for(var i=0; i < data.points.length; i++){
+                console.log(data.points);
+            }
+            alert('Closest point clicked:\n\n'+pts);
+        });
 
         function showParamsKmeans() {
             var divParam = document.getElementById('centroidNumberDiv');
