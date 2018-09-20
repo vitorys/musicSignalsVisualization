@@ -3,13 +3,15 @@
 from app.index.form.params import Params
 
 # Import feature extraction algorithms
-from app.algorithms.featureExtrators.all import get_gtzan_features
-from app.algorithms.featureExtrators.all import get_rp_features
-from app.algorithms.featureExtrators.all import get_stft_features
+from app.algorithms.featureExtrators.all import get_gtzan_features, get_rp_features, get_stft_features
 from app.algorithms.grouping.kmeans import getCentroids
 from app.algorithms.preprocessing.norm import normalize
-
 from app.algorithms.transformations.pca import reduceDimensionality
+
+import numpy as np
+
+# Audio libraries
+import soundfile as sf
 
 # Import graph module
 from app.graph.controller import Graph
@@ -40,8 +42,11 @@ def index():
         request.files['musicFile'].save('app/.data/' + filename)
         musicPath = '/getMusic/' + filename
 
+        #music = sf.SoundFile('/home/suporte/musicSignalsVisualization/app/.data/' + filename)
+        #musicLenght = len(music) / music.samplerate
+
         centroids_number = int(request.form['centroidNumber'])
-        if not centroids_number:
+        if centroids_number == '':
             centroids_number = 10
 
         extratorAlgorithm = request.form['featureExt']
@@ -55,12 +60,39 @@ def index():
 
         matrix_norm = normalize(matrix)
 
-        centroids = getCentroids(matrix_norm, centroids_number)
+        centroids, distancesCentroid = getCentroids(matrix_norm, centroids_number)
+        distancesCentroid = np.array(distancesCentroid)
+
+        #print [ i if (distance[0] <= 5) for i, distance in enumerate(distancesCentroid.argsort(axis=0))])
+
+        # Distance of point vs all centrids
+
+        centroidClosestPoints = 5
+        mais_proximos_todos_centroids = []
+
+        for centroid in xrange(0,centroids_number - 1):
+
+            print("Centroid " + str(centroid))
+
+            mais_proximos_centroid = [0] * centroidClosestPoints
+
+            for i, distance in enumerate(distancesCentroid.argsort(axis=0)):
+
+                if distance[centroid] < centroidClosestPoints:
+                    mais_proximos_centroid[distance[centroid]] = i
+                    print(distance[centroid], i)
+                    print("Inserting "+ str(i) +" into position " + str(distance[centroid]))
+
+            mais_proximos_todos_centroids.append(mais_proximos_centroid)
+
+        print mais_proximos_todos_centroids
 
         pca = reduceDimensionality(matrix_norm)
         matrix_norm = pca.transform(matrix_norm)
         centroids = pca.transform(centroids)
         graph = Graph(matrix_norm, centroids, filename).generateGraph()
+
+        #featureLenght = float(musicLenght)/len(matrix_norm)
 
         return render_template('index.html', graph=graph , form=form, musicPath=musicPath)
 
