@@ -92,11 +92,17 @@
                     <!-- border -->
                 </form>
                 <!-- form -->
-                <div class="border">
-                    <div class="container" id="musicPlayer">
+
+                <div class="border" id="musicPlayer">
+                    <div class="row" style="padding: 20px;">
                         <button id="play" onclick="howlerPlay()">Play</button>
                     </div>
+
                 </div>
+
+                <!-- <div class="border">
+
+                </div> -->
             </div>
             <!--col-md-4-->
         </div>
@@ -115,7 +121,6 @@
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <!-- <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script> -->
 
     <script type="text/javascript">
 
@@ -129,9 +134,10 @@
         myPlot.on('plotly_click', function(data){
             var pts = '';
             for(var i=0; i < data.points.length; i++){
-                console.log(data.points);
+                if (data.points[0].data.name == 'Centroids'){
+                    console.log("Clicou em um centroide.");
+                }
             }
-            alert('Closest point clicked:\n\n'+pts);
         });
 
         function showParamsKmeans() {
