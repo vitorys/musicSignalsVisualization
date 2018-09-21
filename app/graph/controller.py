@@ -41,7 +41,7 @@ class Graph():
                     x=xCentroids,
                     y=yCentroids,
                     mode='markers',
-                    name='Centroids'
+                    name='Centroids',
                 )
             ],
             # Layout

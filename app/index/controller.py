@@ -13,6 +13,8 @@ from app.graph.controller import Graph
 from flask import Blueprint, render_template, request, send_file
 from werkzeug import secure_filename
 
+from librosa.core import frames_to_time
+
 index_blueprint = Blueprint('index', __name__)
 
 @index_blueprint.route('/getMusic/<string:filename>', methods=['GET'])
@@ -37,7 +39,7 @@ def index():
         centroidClosestPoints = 5
         mais_proximos_todos_centroids = []
 
-        for centroid in xrange(0,centroids_number - 1):
+        for centroid in range(0,centroids_number):
             mais_proximos_centroid = [0] * centroidClosestPoints
             for i, distance in enumerate(distancesCentroid.argsort(axis=0)):
                 if distance[centroid] < centroidClosestPoints:
@@ -45,11 +47,22 @@ def index():
 
             mais_proximos_todos_centroids.append(mais_proximos_centroid)
 
+        tempos = frames_to_time(mais_proximos_todos_centroids, sr=44100, hop_length=1024, n_fft=2048)
+        print('--------')
+        print("Position 0 NP")
+        print(tempos[0])
+        print('--------')
+        tempos = tempos.tolist()
+        print("Position 0")
+        print(len(tempos[0]))
+        print('--------')
+
         pca = reduceDimensionality(matrix_norm)
         matrix_norm = pca.transform(matrix_norm)
         centroids = pca.transform(centroids)
         graph = Graph(matrix_norm, centroids, filename).generateGraph()
-        return render_template('index.html', graph=graph , form=form, musicPath=musicPath)
+
+        return render_template('index.html', graph=graph , form=form, musicPath=musicPath, tempos=tempos)
 
     graph = Graph().generateGraph()
     return render_template('index.html', graph=graph , form=form)
