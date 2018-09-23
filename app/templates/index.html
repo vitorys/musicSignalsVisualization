@@ -67,9 +67,12 @@
                             {{ render_field(form.groupAlgorithm, class_="form-control") }}
                         </div>
 
-                        <a href="#" onclick="showParamsKmeans()">
-                            <small>Avançado</small>
-                        </a>
+                        <div class="text-center">
+                            <a href="#" onclick="showParamsKmeans()">
+                                <small>Grouping Algorithm Params</small>
+                            </a>
+
+                        </div>
 
                         <div id="centroidNumberDiv" class="form-group sub-group text-center">
                             {{ render_field(form.centroidNumber, class_="form-control") }}
@@ -93,9 +96,37 @@
                 </form>
                 <!-- form -->
 
-                <div class="border" id="musicPlayer">
+                <div class="border text-center">
                     <div class="row" style="padding: 20px;">
-                        <button id="play" onclick="howlerPlay()">Play</button>
+                        <p class="text-muted" id="status">Click at a centroid to listen the 5 closest centroids.</p>
+
+                        <div id="table" style="overflow:auto;display:none;">
+
+                            <table class="table table-bordered table-responsive-sm">
+                                <thead>
+                                  <tr>
+                                    <th>Frame 1</th>
+                                    <th>Frame 2</th>
+                                    <th>Frame 3</th>
+                                    <th>Frame 4</th>
+                                    <th>Frame 5</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td onclick="playFrame(this.innerText);changeStatusText(1)"></td>
+                                    <td onclick="playFrame(this.innerText);changeStatusText(2)"></td>
+                                    <td onclick="playFrame(this.innerText);changeStatusText(3)"></td>
+                                    <td onclick="playFrame(this.innerText);changeStatusText(4)"></td>
+                                    <td onclick="playFrame(this.innerText);changeStatusText(5)"></td>
+
+                                  </tr>
+
+                                </tbody>
+                              </table>
+                            <small style="color:red;">Click on time to listen the frame</small>
+                        </div>
+
                     </div>
 
                 </div>
@@ -113,7 +144,6 @@
 
 <footer>
     <!-- Howler.js -->
-    <script src="https://raw.githubusercontent.com/goldfire/howler.js/master/src/howler.core.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.14/howler.core.min.js"></script>
     <!-- D3.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
@@ -122,58 +152,72 @@
     <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <script type="text/javascript">
+    <script>
 
-        var tempos = {{ tempos | safe }};
-        var graph = {{ graph | safe}};
+    var player = new Howl({
+        src: ["{{musicPath}}"],
+        volume: 1
+    });
 
-        var myPlot = document.getElementById("graph"),
-            data = graph.data,
-            layout = graph.layout;
+    var tempos = {{ tempos | safe }};
+    var graph = {{ graph | safe}};
 
-        Plotly.newPlot('graph', graph.data, graph.layout || {});
+    var myPlot = document.getElementById("graph"),
+        data = graph.data,
+        layout = graph.layout;
 
-        myPlot.on('plotly_click', function(data){
+    Plotly.newPlot('graph', graph.data, graph.layout || {});
+    myPlot.on('plotly_click', function(data){
 
-            for (let i = 0; i < data.points.length; i++) {
-                if (data.points[i].data.name == 'Centroids'){
-                    console.log(data.points[i].pointIndex);
+        for (let i = 0; i < data.points.length; i++) {
+            if (data.points[i].data.name == 'Centroids'){
+                var indexClicked = data.points[i].pointIndex;
 
-                    var indexClicked = data.points[i].pointIndex;
-
-                    if (!indexClicked) {
-                        continue
-                    }
-
-                    var howler_example = new Howl({
-                        src: ["{{musicPath}}"],
-                        volume: 1
-                    });
-
-                    howler_example.stop();
-                    howler_example.seek(tempos[indexClicked][0]);
-                    howler_example.play()
-
-                    console.log(tempos[indexClicked])
-
-
+                if (!indexClicked) {
+                    continue
                 }
-            }
-        });
 
-        function showParamsKmeans() {
-            var divParam = document.getElementById('centroidNumberDiv');
+                playFrame(tempos[indexClicked][0]);
+                changeStatusTextAndTable(tempos[indexClicked],0);
+            }
+        }
+    });
+
+    function playFrame(frameTime){
+        player.stop();
+        frameTime = parseFloat(frameTime);
+        player.seek(frameTime);
+        player.play()
+    }
+
+    function showParamsKmeans() {
+        var divParam = document.getElementById('centroidNumberDiv');
+
+        if (divParam.style.display == "block") {
+            divParam.style.display = "none";
+        }else{
             divParam.style.display = "block";
         }
+    }
 
-        function howlerPlay(){
-            var howler_example = new Howl({
-		        src: ["{{musicPath}}"],
-		        volume: 1
-	        });
-            howler_example.play();
+    function changeStatusText(frameNumber){
+        var statusObject = document.getElementById("status");
+        statusObject.innerText = "Now playing "+ frameNumber +" closest frame...";
+    }
+
+    function changeStatusTextAndTable(tempos,frameNumber) {
+        var statusObject = document.getElementById("status");
+        statusObject.innerText = "Now playing "+ frameNumber +" closest frame...";
+        var table = document.getElementById("table");
+        var columns = table.getElementsByTagName("td");
+
+        for (let index = 0; index < tempos.length; index++) {
+            var cell = columns[index];
+            cell.innerText = parseFloat(tempos[index]).toPrecision(5);
+
         }
-
+        table.style.display = "block";
+    }
     </script>
 
 </footer>
