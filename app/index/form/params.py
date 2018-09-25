@@ -13,8 +13,10 @@ class Params(Form):
     # Kmeans params #
     centroidNumber = IntegerField('Centroids Number' , [validators.Optional()])
 
-    visualizationAlgorithm = SelectField('Projection Algorithm', [validators.InputRequired()], choices=[('lda', 'Linear Discriminant Analysis'),
-                                                                                                         ('pca', 'Principal Component Analysis')])
+#choices=[('lda', 'Linear Discriminant Analysis'),
+#    ('pca', 'Principal Component Analysis')]
+
+    visualizationAlgorithm = SelectField('Projection Algorithm', [validators.InputRequired()], choices=[('pca', 'Principal Component Analysis')])
 
     featureExt = SelectField('Feature Extractor', choices=[('marsyas', 'Marsyas'),
                                                                 ('rp', 'Random Projection'),

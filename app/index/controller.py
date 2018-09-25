@@ -39,13 +39,22 @@ def index():
         centroidClosestPoints = 5
         mais_proximos_todos_centroids = []
 
-        for centroid in range(0,centroids_number):
-            mais_proximos_centroid = [0] * centroidClosestPoints
-            for i, distance in enumerate(distancesCentroid.argsort(axis=0)):
-                if distance[centroid] < centroidClosestPoints:
-                    mais_proximos_centroid[distance[centroid]] = i
+        # for centroid in range(0,centroids_number):
+        #     mais_proximos_centroid = [0] * centroidClosestPoints
+        #     for i, distance in enumerate(distancesCentroid.argsort(axis=0)):
+                
+        #         if distance[centroid] < centroidClosestPoints:
+        #             mais_proximos_centroid[distance[centroid]] = i
 
-            mais_proximos_todos_centroids.append(mais_proximos_centroid)
+        #     mais_proximos_todos_centroids.append(mais_proximos_centroid)
+
+        closest_frames_idx = distancesCentroid.argsort(axis=0).T[:,:5]
+
+        # print closest_frames_idx
+
+        # print (mais_proximos_todos_centroids)
+
+        mais_proximos_todos_centroids = closest_frames_idx.tolist()
 
         tempos = frames_to_time(mais_proximos_todos_centroids, sr=44100, hop_length=1024, n_fft=2048)
         print('--------')
