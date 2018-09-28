@@ -172,10 +172,7 @@
         for (let i = 0; i < data.points.length; i++) {
             if (data.points[i].data.name == 'Centroids'){
                 var indexClicked = data.points[i].pointIndex;
-
-                if (!indexClicked) {
-                    continue
-                }
+                console.log(indexClicked);
 
                 playFrame(tempos[indexClicked][0]);
                 changeStatusTextAndTable(tempos[indexClicked],0);
