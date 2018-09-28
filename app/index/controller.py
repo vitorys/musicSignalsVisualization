@@ -50,6 +50,8 @@ def index():
 
         closest_frames_idx = distancesCentroid.argsort(axis=0).T[:,:5]
 
+        centroid_frame_counts= np.bincount(np.argmin(distancesCentroid, axis=1))
+
         # print closest_frames_idx
 
         # print (mais_proximos_todos_centroids)
@@ -69,7 +71,7 @@ def index():
         pca = reduceDimensionality(matrix_norm)
         matrix_norm = pca.transform(matrix_norm)
         centroids = pca.transform(centroids)
-        graph = Graph(matrix_norm, centroids, filename).generateGraph()
+        graph = Graph(matrix_norm, centroids, filename, centroid_frame_count=centroid_frame_counts).generateGraph()
 
         return render_template('index.html', graph=graph , form=form, musicPath=musicPath, tempos=tempos)
 
