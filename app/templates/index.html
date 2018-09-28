@@ -156,7 +156,11 @@
 
     var player = new Howl({
         src: ["{{musicPath}}"],
-        volume: 1
+        volume: 1,
+        onplay: function () {
+            sleep(4000);
+            this.stop();
+        }
     });
 
     var tempos = {{ tempos | safe }};
@@ -172,10 +176,8 @@
         for (let i = 0; i < data.points.length; i++) {
             if (data.points[i].data.name == 'Centroids'){
                 var indexClicked = data.points[i].pointIndex;
-                console.log(indexClicked);
-
-                playFrame(tempos[indexClicked][0]);
                 changeStatusTextAndTable(tempos[indexClicked],0);
+                playFrame(tempos[indexClicked][0]);
             }
         }
     });
@@ -184,7 +186,16 @@
         player.stop();
         frameTime = parseFloat(frameTime);
         player.seek(frameTime);
-        player.play()
+        player.play();
+    }
+
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+            break;
+            }
+        }
     }
 
     function showParamsKmeans() {
@@ -211,7 +222,6 @@
         for (let index = 0; index < tempos.length; index++) {
             var cell = columns[index];
             cell.innerText = parseFloat(tempos[index]).toPrecision(5);
-
         }
         table.style.display = "block";
     }
