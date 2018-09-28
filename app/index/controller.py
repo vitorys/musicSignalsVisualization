@@ -6,6 +6,7 @@ from app.algorithms.featureExtrators.all import get_gtzan_features, get_rp_featu
 from app.algorithms.grouping.kmeans import getCentroids
 from app.algorithms.preprocessing.norm import normalize
 from app.algorithms.transformations.pca import reduceDimensionality
+# Import utils tools
 import numpy as np
 # Import graph module
 from app.graph.controller import Graph
@@ -26,59 +27,47 @@ def index():
 
     form = Params(request.form)
 
+    # if user submit the form
     if (request.method == 'POST' and form.validate()):
-
+        # Get data from form
         extratorAlgorithm, filename, centroids_number, musicPath = getFormData()
 
+        # Extract features, then normalize
         matrix = getFeatureMatrix(extratorAlgorithm, filename)
         matrix_norm = normalize(matrix)
 
+        # Get the centroids and calculate the distance to all frames
         centroids, distancesCentroid = getCentroids(matrix_norm, centroids_number)
         distancesCentroid = np.array(distancesCentroid)
 
+        # Define the number of closest frames from centroids to get
         centroidClosestPoints = 5
-        mais_proximos_todos_centroids = []
 
-        # for centroid in range(0,centroids_number):
-        #     mais_proximos_centroid = [0] * centroidClosestPoints
-        #     for i, distance in enumerate(distancesCentroid.argsort(axis=0)):
-                
-        #         if distance[centroid] < centroidClosestPoints:
-        #             mais_proximos_centroid[distance[centroid]] = i
-
-        #     mais_proximos_todos_centroids.append(mais_proximos_centroid)
-
-        closest_frames_idx = distancesCentroid.argsort(axis=0).T[:,:5]
-
+        # Get the ID of frames closest to each centroid
+        closest_frames_idx = distancesCentroid.argsort(axis=0).T[:,:5].tolist()
         centroid_frame_counts= np.bincount(np.argmin(distancesCentroid, axis=1))
 
-        # print closest_frames_idx
-
-        # print (mais_proximos_todos_centroids)
-
-        mais_proximos_todos_centroids = closest_frames_idx.tolist()
-
-        tempos = frames_to_time(mais_proximos_todos_centroids, sr=44100, hop_length=1024, n_fft=2048)
-        print('--------')
-        print("Position 0 NP")
-        print(tempos[0])
-        print('--------')
+        # Get the time from each frame
+        tempos = frames_to_time(closest_frames_idx, sr=44100, hop_length=1024, n_fft=2048)
         tempos = tempos.tolist()
-        print("Position 0")
-        print(len(tempos[0]))
-        print('--------')
 
+        # Apply some transformations
         pca = reduceDimensionality(matrix_norm)
         matrix_norm = pca.transform(matrix_norm)
         centroids = pca.transform(centroids)
+
+        # Generate and encode graph to send to view
         graph = Graph(matrix_norm, centroids, filename, centroid_frame_count=centroid_frame_counts).generateGraph()
 
+        # Send all structures to the view
         return render_template('index.html', graph=graph , form=form, musicPath=musicPath, tempos=tempos)
 
+    # Generate an empty graphic
     graph = Graph().generateGraph()
     return render_template('index.html', graph=graph , form=form)
 
 def getFormData():
+    # Get data from form
     try:
         filename = secure_filename(request.files['musicFile'].filename)
     except:
@@ -96,6 +85,7 @@ def getFormData():
     return extratorAlgorithm, filename, centroids_number, musicPath
 
 def getFeatureMatrix(extratorAlgorithm, filename):
+    # Select the feature extractor and return the matrix of features
     if extratorAlgorithm == 'marsyas':
         matrix = get_gtzan_features('app/.data/' + filename)
     elif extratorAlgorithm == 'rp':
