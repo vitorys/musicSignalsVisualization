@@ -100,7 +100,7 @@
                     <div class="row" style="padding: 20px;">
                         <p class="text-muted" id="status">Click at a centroid to listen the 5 closest centroids.</p>
 
-                        <div id="table" style="overflow:auto;display:none;">
+                        <div id="table" style="overflow:auto;display:block;">
 
                             <table class="table table-bordered table-responsive-sm">
                                 <thead>
@@ -220,6 +220,7 @@
         var columns = table.getElementsByTagName("td");
 
         for (let index = 0; index < tempos.length; index++) {
+            console.log(columns)
             var cell = columns[index];
             cell.innerText = parseFloat(tempos[index]).toPrecision(5);
         }

@@ -1,0 +1,26 @@
+
+.form-group {
+    padding: 10px;
+    overflow: hidden;
+}
+
+.sub-group {
+    display: none;
+}
+
+.container {
+    height: 100vh;
+}
+
+.graph {
+    height: 80vh;
+}
+
+.menu {
+    height: 80vh;
+
+}
+
+.footer {
+    height: 20vh;
+}

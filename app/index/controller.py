@@ -44,7 +44,7 @@ def index():
         centroidClosestPoints = 5
 
         # Get the ID of frames closest to each centroid
-        closest_frames_idx = distancesCentroid.argsort(axis=0).T[:,:5].tolist()
+        closest_frames_idx = distancesCentroid.argsort(axis=0).T.tolist()
         centroid_frame_counts= np.bincount(np.argmin(distancesCentroid, axis=1))
 
         # Get the time from each frame
@@ -58,7 +58,7 @@ def index():
 
         # Generate and encode graph to send to view
         graph = Graph(matrix_norm, centroids, filename, centroid_frame_count=centroid_frame_counts).generateGraph()
-
+        print tempos
         # Send all structures to the view
         return render_template('index.html', graph=graph , form=form, musicPath=musicPath, tempos=tempos)
 
