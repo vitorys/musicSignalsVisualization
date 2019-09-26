@@ -9,3 +9,5 @@
 # venv files #
 ##############
 venv/*
+
+./app/.data/
